@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'rake/gempackagetask'
 require 'rubygems/specification'
-#require 'date'
 
 GEM = "simple_do"
 GEM_VERSION = "1.0.0"
