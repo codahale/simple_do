@@ -43,3 +43,9 @@ task :make_gemspec do
     file.puts spec.to_ruby
   end
 end
+
+desc "run all specs"
+Spec::Rake::SpecTask.new do |t|
+  t.spec_files = FileList["spec/**/*_spec.rb"]
+  t.spec_opts = ["--options", "spec/spec.opts"]
+end
