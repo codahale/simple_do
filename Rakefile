@@ -23,7 +23,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = HOMEPAGE
   
   # Uncomment this to add a dependency
-  # s.add_dependency "foo"
+  s.add_dependency "data_objects"
   
   s.require_path = 'lib'
   s.autorequire = GEM
