@@ -1,4 +1,5 @@
 TODO:
-Fix LICENSE with your name
-Fix Rakefile with your name and contact info
-Add your code to lib/<%= name %>.rb
+* move configuration parsing into small strategy classes:
+    - YAML/ERB file
+    - hash
+    - URI
