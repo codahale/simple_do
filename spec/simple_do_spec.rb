@@ -62,4 +62,33 @@ describe DataObjects::Simple do
       @db.select("SELECT * FROM table").should == [[1], [2]]
     end
   end
+
+  describe "executing non-select queries" do
+    before(:each) do
+      @db = DataObjects::Simple.new("spec/database.yml", "development")
+      @result = stub(:result)
+      @command = stub(:command, :execute_non_query => @result)
+      @connection = stub(:connection, :create_command => @command)
+      DataObjects::Connection.stub!(:new).and_return(@connection)
+    end
+
+    it "should create a command for the given SQL query" do
+      @connection.should_receive(:create_command).with("DELETE FROM table").and_return(@command)
+      @db.execute("DELETE FROM table")
+    end
+
+    it "should execute the command as a non-query" do
+      @command.should_receive(:execute_non_query).and_return(@result)
+      @db.execute("DELETE FROM table")
+    end
+
+    it "should pass the bind variables to the command" do
+      @command.should_receive(:execute_non_query).with(1).and_return(@result)
+      @db.execute("DELETE FROM table WHERE id = ?", 1)
+    end
+
+    it "should return the result of the query" do
+      @db.execute("DELETE FROM table").should == @result
+    end
+  end
 end
