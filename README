@@ -3,3 +3,10 @@ Simple DataObjects
 
 A simple front-end for the lovely DataObjects adapters. For when you need to
 bang on a database, but can't be bothered with an ORM.
+
+    db = DataObjects::Simple.new("config/database.yml")
+    db.select(
+      "SELECT user_id, name FROM users WHERE created_at > ?",
+      [Integer, String],
+      Time.mktime(2007, 1, 1)
+    ) #=> [[1, "Alice"], [2, "Bob"] ... ]
