@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'rake/gempackagetask'
 require 'rubygems/specification'
+require "spec/rake/spectask"
 
 GEM = "simple_do"
 GEM_VERSION = "1.0.0"
@@ -20,8 +21,6 @@ spec = Gem::Specification.new do |s|
   s.author = AUTHOR
   s.email = EMAIL
   s.homepage = HOMEPAGE
-  
-  # Uncomment this to add a dependency
   s.add_dependency "data_objects"
   s.add_dependency "addressable"
   
@@ -39,7 +38,7 @@ task :install => [:package] do
 end
 
 desc "create a gemspec file"
-task :make_spec do
+task :make_gemspec do
   File.open("#{GEM}.gemspec", "w") do |file|
     file.puts spec.to_ruby
   end
