@@ -1,4 +1,5 @@
-simple_do
-=========
+Simple DataObjects
+==================
 
-A gem that provides...
+A simple front-end for the lovely DataObjects adapters. For when you need to
+bang on a database, but can't be bothered with an ORM.
