@@ -63,8 +63,10 @@ describe DataObjects::Simple do
 
     it "should log the query" do
       logger = mock(:logger)
-      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mSELECT name FROM table WHERE id = ? \e[0;33;1m[1]\e[0m\e[0m")
-      @db.logger = logger
+      formatted_logger = mock(:formatted_logger)
+      DataObjects::Simple::Logger.should_receive(:new).with(logger).and_return(formatted_logger)
+      @db = DataObjects::Simple.new("spec/database.yml", "development", logger)
+      formatted_logger.should_receive(:log).with("SELECT name FROM table WHERE id = ?", [1])
       @db.select("SELECT name FROM table WHERE id = ?", nil, 1)
     end
   end
@@ -99,8 +101,10 @@ describe DataObjects::Simple do
 
     it "should log the query" do
       logger = mock(:logger)
-      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mDELETE FROM table WHERE id = ? \e[0;33;1m[1]\e[0m\e[0m")
-      @db.logger = logger
+      formatted_logger = mock(:formatted_logger)
+      DataObjects::Simple::Logger.should_receive(:new).with(logger).and_return(formatted_logger)
+      @db = DataObjects::Simple.new("spec/database.yml", "development", logger)
+      formatted_logger.should_receive(:log).with("DELETE FROM table WHERE id = ?", [1])
       @db.execute("DELETE FROM table WHERE id = ?", 1)
     end
   end

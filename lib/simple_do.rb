@@ -3,17 +3,18 @@ require "yaml"
 
 require "rubygems"
 require "data_objects"
-require File.dirname(__FILE__) + "/simple_do/log_formatter"
+require File.dirname(__FILE__) + "/simple_do/logger"
 require "addressable/uri"
 
 module DataObjects
   class Simple
     attr_reader :options, :uri
-    attr_accessor :logger
     
     def initialize(*args)
-      @formatter = DataObjects::Simple::LogFormatter.new
-      if args.size == 2
+      if args.size == 3
+        @logger = DataObjects::Simple::Logger.new(args.pop)
+      end
+      if args.size == 2 || args.size == 3
         filename, environment = args
         @options = normalize_keys(render_and_load_yml(filename))[environment.to_s.to_sym]
         @uri = construct_uri(@options)
@@ -51,8 +52,8 @@ module DataObjects
   private
     
     def log(query, variables)
-      if logger
-        logger.debug(@formatter.format(query, variables))
+      if @logger
+        @logger.log(query, variables)
       end
     end
 

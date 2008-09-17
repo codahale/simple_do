@@ -3,6 +3,3 @@ TODO:
   - YAML/ERB file
   - hash
   - URI
-* clean up logging
-  - make LogFormatter a decorator of the logger
-  - pass logger in on #initialize
