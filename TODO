@@ -3,3 +3,4 @@ TODO:
     - YAML/ERB file
     - hash
     - URI
+* clean up logging

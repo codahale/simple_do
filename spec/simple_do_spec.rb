@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-require "fileutils"
 require "simple_do"
 
 describe DataObjects::Simple do
@@ -61,6 +60,13 @@ describe DataObjects::Simple do
       @reader.should_receive(:values).and_return([1], [2])
       @db.select("SELECT * FROM table").should == [[1], [2]]
     end
+
+    it "should log the query" do
+      logger = mock(:logger)
+      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mSELECT name FROM table WHERE id = ? \e[0;47;30;1m[1]\e[0m\e[0m")
+      @db.logger = logger
+      @db.select("SELECT name FROM table WHERE id = ?", nil, 1)
+    end
   end
 
   describe "executing non-select queries" do
@@ -89,6 +95,13 @@ describe DataObjects::Simple do
 
     it "should return the result of the query" do
       @db.execute("DELETE FROM table").should == @result
+    end
+
+    it "should log the query" do
+      logger = mock(:logger)
+      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mDELETE FROM table WHERE id = ? \e[0;47;30;1m[1]\e[0m\e[0m")
+      @db.logger = logger
+      @db.execute("DELETE FROM table WHERE id = ?", 1)
     end
   end
 end

@@ -3,13 +3,16 @@ require "yaml"
 
 require "rubygems"
 require "data_objects"
+require File.dirname(__FILE__) + "/simple_do/log_formatter"
 require "addressable/uri"
 
 module DataObjects
   class Simple
     attr_reader :options, :uri
+    attr_accessor :logger
     
     def initialize(*args)
+      @formatter = DataObjects::Simple::LogFormatter.new
       if args.size == 2
         filename, environment = args
         @options = normalize_keys(render_and_load_yml(filename))[environment.to_s.to_sym]
@@ -23,6 +26,7 @@ module DataObjects
     end
 
     def select(query, types = nil, *args)
+      log(query, args)
       command = connection.create_command(query)
       command.set_types(types) unless types.nil?
       reader = command.execute_reader(*args)
@@ -35,6 +39,7 @@ module DataObjects
     end
 
     def execute(query, *args)
+      log(query, args)
       command = connection.create_command(query)
       result = command.execute_non_query(*args)
       return result
@@ -44,6 +49,12 @@ module DataObjects
     alias_method :delete, :execute
 
   private
+    
+    def log(query, variables)
+      if logger
+        logger.debug(@formatter.format(query, variables))
+      end
+    end
 
     def render_and_load_yml(filename)
       return YAML.load(ERB.new(File.read(filename), nil, "-").result)
