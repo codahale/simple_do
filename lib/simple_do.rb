@@ -22,12 +22,13 @@ module DataObjects
       end
     end
 
-    def connection
+    def make_connection
       return DataObjects::Connection.new(@uri)
     end
 
     def select(query, types = nil, *args)
       log(query, args)
+      connection = make_connection
       command = connection.create_command(query)
       command.set_types(types) unless types.nil?
       reader = command.execute_reader(*args)
@@ -35,15 +36,20 @@ module DataObjects
       while reader.next!
         rows << reader.values
       end
-      reader.close
       return rows
+    ensure
+      reader.close if reader
+      connection.close if connection
     end
 
     def execute(query, *args)
       log(query, args)
+      connection = make_connection
       command = connection.create_command(query)
       result = command.execute_non_query(*args)
       return result
+    ensure
+      connection.close if connection
     end
     alias_method :insert, :execute
     alias_method :update, :execute

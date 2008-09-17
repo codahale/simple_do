@@ -22,7 +22,7 @@ describe DataObjects::Simple do
     it "should create a new DataObjects::Connection for the specified database" do
       @db = DataObjects::Simple.new("spec/database.yml", "development")
       DataObjects::Connection.should_receive(:new).with("sqlite3:db/blah.sqlite3").and_return("conn")
-      @db.connection.should == "conn"
+      @db.make_connection.should == "conn"
     end
   end
 
@@ -31,7 +31,7 @@ describe DataObjects::Simple do
       @db = DataObjects::Simple.new("spec/database.yml", "development")
       @reader = stub(:reader, :next! => nil, :close => nil)
       @command = stub(:command, :execute_reader => @reader)
-      @connection = stub(:connection, :create_command => @command)
+      @connection = stub(:connection, :create_command => @command, :close => nil)
       DataObjects::Connection.stub!(:new).and_return(@connection)
     end
 
@@ -69,6 +69,11 @@ describe DataObjects::Simple do
       formatted_logger.should_receive(:log).with("SELECT name FROM table WHERE id = ?", [1])
       @db.select("SELECT name FROM table WHERE id = ?", nil, 1)
     end
+
+    it "should close the connection" do
+      @connection.should_receive(:close)
+      @db.select("SELECT name FROM table WHERE id = ?", nil, 1)
+    end
   end
 
   describe "executing non-select queries" do
@@ -76,7 +81,7 @@ describe DataObjects::Simple do
       @db = DataObjects::Simple.new("spec/database.yml", "development")
       @result = stub(:result)
       @command = stub(:command, :execute_non_query => @result)
-      @connection = stub(:connection, :create_command => @command)
+      @connection = stub(:connection, :create_command => @command, :close => nil)
       DataObjects::Connection.stub!(:new).and_return(@connection)
     end
 
@@ -105,6 +110,11 @@ describe DataObjects::Simple do
       DataObjects::Simple::Logger.should_receive(:new).with(logger).and_return(formatted_logger)
       @db = DataObjects::Simple.new("spec/database.yml", "development", logger)
       formatted_logger.should_receive(:log).with("DELETE FROM table WHERE id = ?", [1])
+      @db.execute("DELETE FROM table WHERE id = ?", 1)
+    end
+
+    it "should close the connection" do
+      @connection.should_receive(:close)
       @db.execute("DELETE FROM table WHERE id = ?", 1)
     end
   end
