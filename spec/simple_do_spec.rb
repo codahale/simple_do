@@ -63,7 +63,7 @@ describe DataObjects::Simple do
 
     it "should log the query" do
       logger = mock(:logger)
-      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mSELECT name FROM table WHERE id = ? \e[0;47;30;1m[1]\e[0m\e[0m")
+      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mSELECT name FROM table WHERE id = ? \e[0;33;1m[1]\e[0m\e[0m")
       @db.logger = logger
       @db.select("SELECT name FROM table WHERE id = ?", nil, 1)
     end
@@ -99,7 +99,7 @@ describe DataObjects::Simple do
 
     it "should log the query" do
       logger = mock(:logger)
-      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mDELETE FROM table WHERE id = ? \e[0;47;30;1m[1]\e[0m\e[0m")
+      logger.should_receive(:debug).with("  \e[4;36;1mSQL:\e[0m   \e[0;1mDELETE FROM table WHERE id = ? \e[0;33;1m[1]\e[0m\e[0m")
       @db.logger = logger
       @db.execute("DELETE FROM table WHERE id = ?", 1)
     end

@@ -19,7 +19,7 @@ module DataObjects
       def format_query(query, variables)
         log_entry = query.gsub(/[\s]+/i, " ")
         if variables.any?
-          log_entry << " \e[0;47;30;1m#{variables.inspect}\e[0m"
+          log_entry << " \e[0;33;1m#{variables.inspect}\e[0m"
         end
         return log_entry
       end
