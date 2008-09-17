@@ -1,15 +1,23 @@
 module DataObjects
   class Simple
-    class LogFormatter
-      
+    class Logger
+
+      def initialize(logger)
+        @logger = logger
+      end
+
+      def log(query, variables)
+        @logger.debug(format(query, variables))
+      end
+
+    private
+
       def format(query, variables)
         message_color, dump_color = get_colors
         log_entry = "  \e[#{message_color}mSQL:\e[0m   "
         log_entry << "\e[#{dump_color}m%s\e[0m" % format_query(query, variables)
         return log_entry
       end
-
-    private
 
       def get_colors
         @row_even = !@row_even
